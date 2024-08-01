@@ -15,11 +15,5 @@ build:
 	@echo "Cloning src"
 	cp -r src dist
 
-	@echo "Adding commit hash"
-	python3 commitHashInjector/main.py
-
 	@echo "Building JS file"
 	npm run browserify:dist
-
-	@echo "Removing old files"
-	rm dist/indexVanilla.html && rm dist/mainUnbundled.js

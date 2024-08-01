@@ -7,3 +7,5 @@ commitHash
 .DS_Store
 package-lock.json
 .theia
+docker-compose.prod.yml
+Makefile.prod
