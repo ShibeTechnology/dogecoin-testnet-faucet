@@ -1,17 +1,15 @@
-FROM node:latest
-
-# File Author / Maintainer
-MAINTAINER Lola Rigaut-Luczak <me@lola.ninja>
+FROM node:latest AS builder
 
 # Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
-# For npm@5 or later, copy package-lock.json as well
-COPY package.json package-lock.json ./
-# Bundle app source
+# Copy source files
 COPY . .
 
 RUN npm install
+RUN cp -r src dist
+RUN npm run browserify:dist
 
-# Issue. Make build won't work because we don't have the .git or git command.
+FROM nginx:1.27
+
+COPY --from=builder /usr/src/app/dist /usr/share/nginx/html/
