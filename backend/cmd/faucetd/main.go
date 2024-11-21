@@ -64,16 +64,22 @@ func shutdownOnSignal(s *server.Server) {
 	s.Stop()
 }
 
-func progName() string {
-	fn := platform.OSProgName()
-	if len(fn) > 0 {
+func progFile() string {
+	fn, err := os.Executable()
+	if len(fn) > 0 && err == nil {
 		return fn
 	}
 	if len(os.Args) > 0 {
-		fn = filepath.Base(os.Args[0])
-		switch fn {
-		case "", ".", string(filepath.Separator):
-		default:
+		return os.Args[0]
+	}
+	return ""
+}
+
+func progName() string {
+	fn := progFile()
+	if len(fn) > 0 {
+		fn = filepath.Base(fn)
+		if len(fn) > 0 && fn != "." && fn != string(filepath.Separator) {
 			return fn
 		}
 	}
@@ -262,7 +268,7 @@ func cmdServe(args []string) error {
 	}
 	s := server.NewServer(&cfg.Server, f)
 	go shutdownOnSignal(s)
-	err = s.Serve()
+	err = s.Serve(nil)
 	if err != nil {
 		return err
 	}
